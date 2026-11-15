@@ -60,26 +60,17 @@ def remove_duplicates(papers: list[ResearchPaper]) -> list[ResearchPaper]:
     unique_papers = {}
 
     for paper in papers:
-        key = (
-            " ".join(paper.title.lower().split()),
-            paper.year
-        )
+        key = (" ".join(paper.title.lower().split()), paper.year)
 
         existing = unique_papers.get(key)
 
-        if (
-            existing is None
-            or (paper.citation_count or 0) > (existing.citation_count or 0)
-        ):
+        if (existing is None or (paper.citation_count or 0) > (existing.citation_count or 0)):
             unique_papers[key] = paper
 
     return list(unique_papers.values())
 
 
-def search_papers(
-    constraints: ResearchConstraints,
-    max_results: int = 10
-) -> list[ResearchPaper]:
+def search_papers(constraints: ResearchConstraints, max_results: int = 10) -> list[ResearchPaper]:
     """Search OpenAlex and return papers matching numerical constraints."""
 
     params = {
@@ -125,9 +116,7 @@ def search_papers(
             citation_count=work.get("cited_by_count"),
             citation_source="OpenAlex",
             url=url,
-            abstract=reconstruct_abstract(
-                work.get("abstract_inverted_index")
-            ),
+            abstract=reconstruct_abstract(work.get("abstract_inverted_index")),
         )
 
         papers.append(paper)
