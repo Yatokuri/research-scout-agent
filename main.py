@@ -1,5 +1,7 @@
-
 import asyncio
+import os
+
+os.environ["PYDANTIC_AI_NO_BANNER"] = "1"
 
 from agent import run_research
 
@@ -18,7 +20,10 @@ async def main():
             continue
 
         try:
-            result = await run_research(request)
+            result, constraints = await run_research(request)
+
+            print("\nExtracted constraints:")
+            print(constraints.model_dump_json(indent=2))
 
             if not result.found or result.paper is None:
                 print(f"\nNo matching paper found.")

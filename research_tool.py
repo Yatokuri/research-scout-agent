@@ -1,7 +1,7 @@
-
 import os
 
 import httpx
+import math
 from dotenv import load_dotenv
 
 from models import ResearchConstraints, ResearchPaper
@@ -27,31 +27,50 @@ def reconstruct_abstract(inverted_index: dict | None) -> str:
     return " ".join(words[position] for position in sorted(words))
 
 
+
 def build_openalex_filters(constraints: ResearchConstraints) -> str:
-    """Convert publication-year constraints into OpenAlex filters."""
+    """Convert year and citation constraints into OpenAlex filters."""
 
-    if constraints.year is None:
-        return ""
+    filters = []
 
-    year = constraints.year
-    operator = constraints.year_operator
+    if constraints.year is not None:
+        year = constraints.year
+        operator = constraints.year_operator
 
-    if operator == "before":
-        return f"publication_year:<{year}"
+        if operator == "before":
+            filters.append(f"publication_year:<{year}")
+        elif operator == "after":
+            filters.append(f"publication_year:>{year}")
+        elif operator == "in":
+            filters.append(f"publication_year:{year}")
+        elif operator == "on_or_before":
+            filters.append(f"publication_year:<{year + 1}")
+        elif operator == "on_or_after":
+            filters.append(f"publication_year:>{year - 1}")
 
-    if operator == "after":
-        return f"publication_year:>{year}"
+    if constraints.citation_count is not None:
+        citations = constraints.citation_count
+        operator = constraints.citation_operator
 
-    if operator == "in":
-        return f"publication_year:{year}"
+        if operator == "gt":
+            filters.append(f"cited_by_count:>{citations}")
+        elif operator == "gte":
+            filters.append(f"cited_by_count:>{citations - 1}")
+        elif operator == "lt":
+            filters.append(f"cited_by_count:<{citations}")
+        elif operator == "lte":
+            filters.append(f"cited_by_count:<{citations + 1}")
+        elif operator == "approx":
+            tolerance = max(1, citations * 0.1)
 
-    if operator == "on_or_before":
-        return f"publication_year:<{year + 1}"
+            minimum = max(0, math.ceil(citations - tolerance))
+            maximum = math.floor(citations + tolerance)
 
-    if operator == "on_or_after":
-        return f"publication_year:>{year - 1}"
+            filters.append(f"cited_by_count:>{minimum - 1}")
+            filters.append(f"cited_by_count:<{maximum + 1}")
 
-    return ""
+    return ",".join(filters)
+
 
 
 def remove_duplicates(papers: list[ResearchPaper]) -> list[ResearchPaper]:
