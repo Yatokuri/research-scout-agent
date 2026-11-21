@@ -173,7 +173,3 @@ Evaluation results and observations will be added after testing the agent with d
 - The language model may occasionally misunderstand ambiguous requests.
 - Only a limited number of search results are retrieved for each request.
 - Groq API usage is subject to rate limits.
-
-## License
-
-License information to be added if applicable.

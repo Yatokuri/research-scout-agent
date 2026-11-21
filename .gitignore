@@ -219,3 +219,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Individual Evaluation Runs (Temporary/debugging)
+evaluation_case_*.csv
