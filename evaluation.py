@@ -123,6 +123,21 @@ EVALUATION_CASES = [
             year_operator="on_or_after",
         ),
     ),
+    EvaluationCase(
+        name="Ambiguous publication year",
+        prompt="Find a paper about machine learning published around 2020.",
+        expected=ResearchConstraints(
+            topic="machine learning",
+        ),
+    ),
+    EvaluationCase(
+        name="Vague citation requirements",
+        prompt="Find a recent, highly cited paper about artificial intelligence.",
+        expected=ResearchConstraints(
+            topic="artificial intelligence",
+        ),
+    ),
+
 ]
 
 
@@ -196,6 +211,7 @@ async def run_evaluation(
             "paper_year": "",
             "paper_citations": "",
             "citation_source": "",
+            "source_valid": None,
             "paper_url": "",
             "explanation": "",
             "retries": 0,
@@ -216,6 +232,18 @@ async def run_evaluation(
                 else None
             )
 
+            source_valid = (
+                bool(
+                    result.paper
+                    and result.paper.citation_source.strip()
+                    and result.paper.url.strip()
+                    and result.paper.title.strip()
+                    and result.paper.authors
+                )
+                if result.found
+                else None
+            )
+
             found_correct = (
                 result.found == case.expected_found
                 if case.expected_found is not None
@@ -232,6 +260,7 @@ async def run_evaluation(
                 "paper_year": result.paper.year if result.paper else "",
                 "paper_citations": result.paper.citation_count if result.paper else "",
                 "citation_source": result.paper.citation_source if result.paper else "",
+                "source_valid": source_valid,
                 "paper_url": result.paper.url if result.paper else "",
                 "explanation": result.explanation,
                 "retries": retries,
@@ -240,6 +269,7 @@ async def run_evaluation(
             print(f"Constraints correct: {constraints_correct}")
             print(f"Paper found: {result.found}")
             print(f"Paper valid: {paper_valid}")
+            print(f"Source valid: {source_valid}")
             print(f"Rate-limit retries: {retries}")
 
         except Exception as error:
@@ -260,6 +290,7 @@ async def run_evaluation(
         if not row["error"]
         and row["constraints_correct"] is True
         and row["paper_valid"] is not False
+        and row["source_valid"] is not False
         and row["found_correct"] is not False
         and (
             row["found"] is True
@@ -291,7 +322,7 @@ def main():
     group.add_argument(
         "--case",
         type=int,
-        help="Run one evaluation case by its number (1-10).",
+        help="Run one evaluation case by its number.",
     )
 
     parser.add_argument(
