@@ -66,29 +66,6 @@ Before running the application, make sure you have:
 - A Groq API key.
 - An OpenAlex API key.
 
-API keys can be obtained from:
-
-- [Groq Console](https://console.groq.com/)
-- [OpenAlex](https://openalex.org/)
-
-### Obtaining API Keys
-
-The application requires API keys for Groq and OpenAlex.
-
-**Groq API Key:**
-1. Visit [Groq Console](https://console.groq.com/).
-2. Create an account or sign in.
-3. Navigate to **API Keys** and generate a new API key.
-4. Copy the key into the `GROQ_API_KEY` variable in your `.env` file.
-
-**OpenAlex API Key:**
-1. Visit [OpenAlex](https://openalex.org/).
-2. Register or sign in.
-3. Follow the API key registration instructions to obtain your key.
-4. Copy the key into the `OPENALEX_API_KEY` variable in your `.env` file.
-
-Keep your API keys private. The `.env` file should not be committed to GitHub.
-
 ## Installation
 
 ### 1. Clone the repository
@@ -125,6 +102,26 @@ python -m pip install -r requirements.txt
 ```
 
 ## Configuration
+
+### Obtaining API Keys
+
+The application requires API keys for Groq and OpenAlex.
+
+**Groq API Key:**
+1. Visit [Groq Console](https://console.groq.com/).
+2. Create an account or sign in.
+3. Navigate to **API Keys** and generate a new API key.
+4. Copy the key into the `GROQ_API_KEY` variable in your `.env` file.
+
+**OpenAlex API Key:**
+1. Visit [OpenAlex](https://openalex.org/).
+2. Register or sign in.
+3. Follow the API key registration instructions to obtain your key.
+4. Copy the key into the `OPENALEX_API_KEY` variable in your `.env` file.
+
+Keep your API keys private. The `.env` file should not be committed to GitHub.
+
+### Environment Variables
 
 Create a `.env` file in the project root.
 
